@@ -7,7 +7,7 @@ import sqlite3
 import json
 
 #def get_player_information():
-url = "http://www.nhl.com/stats/skaters?reportType=season&seasonFrom=20162017&seasonTo=20202021&gameType=2&filter=gamesPlayed,gte,1&sort=points,goals,assists&page=0&pageSize=100"
+url = "https://www.quanthockey.com/nhl/seasons/last-5-nhl-seasons-players-stats.html"
 r = requests.get(url)
 soup = BeautifulSoup(r.content, 'html.parser')
 
@@ -16,10 +16,17 @@ name_list = []
 points_list = []
 final_list = []
 
+print(soup.find('div', class_='overflow-container'))
+
 #find all rankings, names, and points for players
-rankings = soup.find_all('div', class_='rt-td index-column rthfc-td-fixed rthfc-td-fixed-left')
-names = soup.find_all('div', class_= 'rt-td rthfc-td-fixed rthfc-td-fixed-left rthfc-td-fixed-left-last')
-points = soup.find_all('div', class_= 'rt-td primarySort')
+table = soup.find('div', class_='ReactTable -striped -highlight rthfc-knq8fb19 rthfc -sp')
+table1 = table.find('div', class_='rt-tbody')
+rows = table1.find_all('div', class_= 'rt-tr-group')
+
+for row in rows:
+    rankings = row.find_all('div', class_='rt-td index-column rthfc-td-fixed rthfc-td-fixed-left')
+    names = row.find_all('div', class_= 'rt-td rthfc-td-fixed rthfc-td-fixed-left rthfc-td-fixed-left-last')
+    points = row.find_all('div', class_= 'rt-td primarySort')
 
 for rank in rankings:
     ranking_list.append(rank.text.strip())
