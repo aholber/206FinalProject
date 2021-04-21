@@ -38,6 +38,6 @@ for point in points:
 for i in range(len(ranking_list)):
     final_list.append((ranking_list[i], name_list[i], points_list[i]))
 
-print(final_list)
+#print(final_list)
 
 
