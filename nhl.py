@@ -16,17 +16,22 @@ name_list = []
 points_list = []
 final_list = []
 
-print(soup.find('div', class_='overflow-container'))
+#print(soup.find('div', class_='overflow-container'))
 
 #find all rankings, names, and points for players
-table = soup.find('div', class_='ReactTable -striped -highlight rthfc-knq8fb19 rthfc -sp')
-table1 = table.find('div', class_='rt-tbody')
-rows = table1.find_all('div', class_= 'rt-tr-group')
+first_table = soup.find('div', class_='overflow-container')
+#sec_table = first_table.find('div', class_='dataTables_wrapper no-footer')
+#another_table = sec_table.find_all('div', class_= 'DTFC_ScrrollWrapper')
+table = first_table.find('div', class_='dataTables_scroll')
 
-for row in rows:
-    rankings = row.find_all('div', class_='rt-td index-column rthfc-td-fixed rthfc-td-fixed-left')
-    names = row.find_all('div', class_= 'rt-td rthfc-td-fixed rthfc-td-fixed-left rthfc-td-fixed-left-last')
-    points = row.find_all('div', class_= 'rt-td primarySort')
+body1 = table.find('div', class_='dataTables_scrollBody')
+the_body = body1.find('div', class_='ps_tbl no wrap dt3 dataTable no-footer')
+
+rows_odd = the_body.find_all('tr', class_='odd')
+for row in rows_odd:
+    rankings = row.find_all('td', class_='alignleft')
+    names = row.find_all('a', class_= 'hl qh-nowrap')
+    points = row.find_all('td', class_= 'sort-column')
 
 for rank in rankings:
     ranking_list.append(rank.text.strip())
