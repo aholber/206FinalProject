@@ -16,13 +16,15 @@ name_list = []
 points_list = []
 final_list = []
 
-#print(soup.find('div', class_='overflow-container'))
+print(soup.find('div', class_='overflow-container'))
+first_table = soup.find('div', class_='overflow-container')
+#print(first_table.find('div', class_='dataTables_wrapper no-footer'))
 
 #find all rankings, names, and points for players
-first_table = soup.find('div', class_='overflow-container')
-#sec_table = first_table.find('div', class_='dataTables_wrapper no-footer')
+print(first_table.find('div', class_='dataTables_wrapper no-footer'))
+sec_table = first_table.find('div', class_='dataTables_wrapper no-footer')
 #another_table = sec_table.find_all('div', class_= 'DTFC_ScrrollWrapper')
-table = first_table.find('div', class_='dataTables_scroll')
+table = sec_table.find('div', class_='dataTables_scroll')
 
 body1 = table.find('div', class_='dataTables_scrollBody')
 the_body = body1.find('div', class_='ps_tbl no wrap dt3 dataTable no-footer')
@@ -46,3 +48,8 @@ for i in range(len(ranking_list)):
 print(final_list)
 
 
+def setUpDatabase(db_name):
+    path = os.path.dirname(os.path.abspath(__file__))
+    conn = sqlite3.connect(path+'/'+db_name)
+    cur = conn.cursor()
+    return cur, conn
