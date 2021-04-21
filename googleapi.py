@@ -13,8 +13,16 @@ def search():
 
     searchResults = searchData.json()
 
+    #print(searchResults)
+
     birthmonth = searchResults['knowledge_graph']['known_attributes'][0]['value'][0:3]
+    
+    info = searchResults['knowledge_graph']['known_attributes'][0]['value']
+    info = info.split(',')
+    birthcountry = info[-1]
+    birthcountry = birthcountry.strip()
     print(birthmonth)
+    print(birthcountry)
 
 
 search()

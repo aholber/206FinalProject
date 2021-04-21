@@ -18,7 +18,7 @@ final_list = []
 
 print(soup.find('div', class_='overflow-container'))
 first_table = soup.find('div', class_='overflow-container')
-#print(first_table.find('div', class_='dataTables_wrapper no-footer'))
+print(soup.find('div', class_='dataTables_wrapper no-footer'))
 
 #find all rankings, names, and points for players
 print(first_table.find('div', class_='dataTables_wrapper no-footer'))
@@ -45,7 +45,7 @@ for point in points:
 for i in range(len(ranking_list)):
     final_list.append((ranking_list[i], name_list[i], points_list[i]))
 
-print(final_list)
+#print(final_list)
 
 
 def setUpDatabase(db_name):
