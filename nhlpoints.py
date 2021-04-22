@@ -30,7 +30,7 @@ def get_player_info():
             pointinfo = pointtag.text
             pointlist.append(pointinfo)
 
-        playerinfo = [(namelist[i], pointlist[i]) for i in range(0, len(namelist))]
+        playerinfo = [(namelist[i], pointlist[i], i+1) for i in range(0, len(namelist))]
     print(playerinfo)
     return playerinfo
 
@@ -43,12 +43,17 @@ def setUpDatabase(db_name):
 
 def setup_players_table(cur, conn):
     data = get_player_info()
-    cur.execute('CREATE TABLE IF NOT EXISTS Players (name TEXT PRIMARY KEY, points INTEGER)')
-    for x in data:
-        cur.execute('INSERT INTO Players (name, points) VALUES (?, ?)', (x[0], x[1]))
+    cur.execute('CREATE TABLE IF NOT EXISTS Players (ranking INTEGER PRIMARY KEY, name TEXT, points INTEGER)')
+    for x in range(0,25):
+        cur.execute('SELECT * FROM Players')
+        rows = len(cur.fetchall())
+        cur.execute('INSERT INTO Players (ranking, name, points) VALUES (?, ?, ?)', (data[rows][2], data[rows][0], data[rows][1]))
     conn.commit()
 
-    
+def setup_id_tables(cur,conn):
+   # month
+   # cur execute('CREATE TABLE IF NOT EXISTS ')  
+   pass  
 
 
 def main():
