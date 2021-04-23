@@ -30,9 +30,10 @@ def get_player_info():
             pointinfo = pointtag.text
             pointlist.append(pointinfo)
 
-        playerinfo = [(namelist[i], pointlist[i], i+1) for i in range(0, len(namelist))]
+        playerinfo = [(namelist[i], pointlist[i]) for i in range(0, len(namelist))]
     print(playerinfo)
     return playerinfo
+
 
 def setUpDatabase(db_name):
     path = os.path.dirname(os.path.abspath(__file__))
@@ -43,23 +44,33 @@ def setUpDatabase(db_name):
 
 def setup_players_table(cur, conn):
     data = get_player_info()
-    cur.execute('CREATE TABLE IF NOT EXISTS Players (ranking INTEGER PRIMARY KEY, name TEXT, points INTEGER)')
+    cur.execute('CREATE TABLE IF NOT EXISTS Players (name TEXT PRIMARY KEY, points INTEGER)')
     for x in range(0,25):
         cur.execute('SELECT * FROM Players')
         rows = len(cur.fetchall())
-        cur.execute('INSERT INTO Players (ranking, name, points) VALUES (?, ?, ?)', (data[rows][2], data[rows][0], data[rows][1]))
+        cur.execute('INSERT INTO Players ( name, points) VALUES (?, ?)', (data[rows][0], data[rows][1]))
     conn.commit()
 
-def setup_id_tables(cur,conn):
-   # month
-   # cur execute('CREATE TABLE IF NOT EXISTS ')  
-   pass  
+
+def setup_month_id(cur,conn):
+    months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    cur.execute('CREATE TABLE IF NOT EXISTS Months_id (id INTEGER PRIMARY KEY, month TEXT)')  
+    for i in range(len(months)):
+        cur.execute('INSERT INTO Months_id (id, month) VALUES (?,?)', (i+1, months[i]))  
+    conn.commit()
+
+
 
 
 def main():
     get_player_info()
     cur, conn = setUpDatabase('players.db')
     setup_players_table(cur, conn)
+    setup_players_table(cur, conn)
+    setup_players_table(cur, conn)
+    #setup_players_table(cur, conn)
+    setup_month_id(cur,conn)
+
 
 if __name__ == "__main__":
     main()
