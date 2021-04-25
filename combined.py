@@ -38,21 +38,25 @@ def player_info():
     return playerinfo
 
 
-
-
 def search(player):
+<<<<<<< HEAD
     
     searchQuery = {
         'access_key': 'cffb9950e098f49f973ffb30e8f2274e',
         'query': player
     }
+=======
+    bigsearchResults = []
+>>>>>>> 0104e0e3b9cd27e50d2845198c866f3bf3ca0954
 
-    searchData = requests.get('http://api.serpstack.com/search', searchQuery)
+    for number in range(1,31):
+        
 
-    searchResults = searchData.json()
+        searchData = requests.get('https://statsapi.web.nhl.com/api/v1/teams/{}/roster'.format(number))
 
-    #print(searchResults)
+        searchResults = searchData.json()
 
+<<<<<<< HEAD
     birthmonth = searchResults['knowledge_graph']['known_attributes'][0]['value'][0:3]
     if len(birthmonth) > 3:
         birthmonth = birthmonth[0:3]
@@ -65,12 +69,21 @@ def search(player):
     birthcountry = birthcountry.strip()
     if len(birthcountry) <= 2:
         birthcountry = 'United States'
+=======
+        bigsearchResults.append(searchResults)
+>>>>>>> 0104e0e3b9cd27e50d2845198c866f3bf3ca0954
         
-    #print(birthmonth)
-    #print(birthcountry)
 
-    return player, birthmonth, birthcountry
+    bigsearchResults.remove({'messageNumber': 10, 'message': 'Object not found'})
+    bigsearchResults.remove({'messageNumber': 10, 'message': 'Object not found'})
 
+    idlist = []
+    for i in bigsearchResults:
+        for x in i['roster']:
+            playerid = x['person']['id']
+            idlist.append(playerid)
+
+<<<<<<< HEAD
 #
 #    print(search(player[0]))
 
@@ -124,3 +137,20 @@ def main():
 
 if __name__ == "__main__":
     main()
+=======
+    for id in idlist:
+        searchData = requests.get('https://statsapi.web.nhl.com/api/v1/people/{}'.format(id))
+        searchResults = searchData.json()
+
+        name = searchResults['people'][0]['fullName']
+        birthmonth = searchResults['people'][0]['birthDate'][5:7]
+        birthcountry = searchResults['people'][0]['birthCountry']
+
+        print(name, birthmonth, birthcountry)
+
+    return name, birthmonth, birthcountry
+
+
+    
+
+>>>>>>> 0104e0e3b9cd27e50d2845198c866f3bf3ca0954
