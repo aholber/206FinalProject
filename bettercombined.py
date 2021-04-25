@@ -9,8 +9,34 @@ import json
 
 
 
+<<<<<<< HEAD
 def search():
     
+=======
+    for url in urls:
+        r = requests.get(url)
+        soup = BeautifulSoup(r.content, 'html.parser')
+
+        nametags = soup.find_all('a', class_="hl qh-nowrap")
+        pointtags = soup.find_all('td', class_="sort-column")
+
+        for nametag in nametags:
+            nameinfo = nametag.text
+            namelist.append(nameinfo)
+
+        for pointtag in pointtags:
+            pointinfo = pointtag.text
+            pointlist.append(pointinfo)
+
+        playerinfo = [(namelist[i], pointlist[i]) for i in range(0, len(namelist))]
+
+    print(playerinfo)
+    return playerinfo
+
+
+def search():
+    playerinfo = player_info()
+>>>>>>> 5be7ca714ac11d2abf0ba539a87570539d826d45
     bigsearchResults = []
 
     for number in range(1,31):
@@ -42,6 +68,7 @@ def search():
         birthmonth = searchResults['people'][0]['birthDate'][5:7]
         birthcountry = searchResults['people'][0]['birthCountry']
 
+<<<<<<< HEAD
         full = name, birthmonth, birthcountry 
 
         totallist.append(full)
@@ -86,6 +113,24 @@ def player_info():
         print(player)
 
     return playerinfo
+=======
+        #everybody = ((name, birthmonth, birthcountry))
+
+        only_who_we_want = []
+        for player in playerinfo:
+            if player[0] == name:
+                only_who_we_want.append((name, birthmonth, birthcountry))
+            for i in only_who_we_want:
+                if i == '[]':
+                    i = ''
+        print(only_who_we_want)
+        #print((name, birthmonth, birthcountry))
+        #return (name, birthmonth, birthcountry)
+
+
+player_info()
+search()    
+>>>>>>> 5be7ca714ac11d2abf0ba539a87570539d826d45
 
 search = search()
 player_info()
