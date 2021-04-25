@@ -34,13 +34,14 @@ def player_info():
 
         playerinfo = [(namelist[i], pointlist[i]) for i in range(0, len(namelist))]
 
-    print(playerinfo)
+    #print(playerinfo)
     return playerinfo
 
 
 def search():
     playerinfo = player_info()
     bigsearchResults = []
+    only_who_we_want = []
 
     for number in range(1,31):
         
@@ -71,14 +72,28 @@ def search():
 
         #everybody = ((name, birthmonth, birthcountry))
 
-        only_who_we_want = []
         for player in playerinfo:
             if player[0] == name:
                 only_who_we_want.append((name, birthmonth, birthcountry))
-        print(only_who_we_want)
+    return only_who_we_want
         #print((name, birthmonth, birthcountry))
         #return (name, birthmonth, birthcountry)
 
 
-player_info()
-search()    
+def same_names():
+    players = player_info()
+    info = search()
+    name_api_list = []
+    the_best_list_ever = []
+    
+    for i in info:
+        name_api_list.append(i[0])
+
+    for player in players:
+        if player[0] in name_api_list:
+            the_best_list_ever.append(player)
+
+    return the_best_list_ever
+
+
+  
