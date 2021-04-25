@@ -7,6 +7,48 @@ import sqlite3
 import json
 
 
+
+
+def search():
+    
+    bigsearchResults = []
+
+    for number in range(1,31):
+        
+
+        searchData = requests.get('https://statsapi.web.nhl.com/api/v1/teams/{}/roster'.format(number))
+
+        searchResults = searchData.json()
+
+        bigsearchResults.append(searchResults)
+        
+
+    bigsearchResults.remove({'messageNumber': 10, 'message': 'Object not found'})
+    bigsearchResults.remove({'messageNumber': 10, 'message': 'Object not found'})
+
+    idlist = []
+    totallist = []
+
+    for i in bigsearchResults:
+        for x in i['roster']:
+            playerid = x['person']['id']
+            idlist.append(playerid)
+
+    for id in idlist[:60]:
+        searchData = requests.get('https://statsapi.web.nhl.com/api/v1/people/{}'.format(id))
+        searchResults = searchData.json()
+
+        name = searchResults['people'][0]['fullName']
+        birthmonth = searchResults['people'][0]['birthDate'][5:7]
+        birthcountry = searchResults['people'][0]['birthCountry']
+
+        full = name, birthmonth, birthcountry 
+
+        totallist.append(full)
+    #print(totallist)
+    return totallist
+
+
 def player_info():
     urls = []
     urls.append("https://www.quanthockey.com/scripts/AjaxPaginate.php?cat=Season&pos=Players&SS=5&af=0&nat=5&st=reg&sort=P&so=DESC&page=1&league=NHL&lang=en&rnd=434602094&dt=2&sd=undefined&ed=undefined")
@@ -16,6 +58,8 @@ def player_info():
     namelist = []
     pointlist = []
     playerinfo = []
+
+    search = search()
 
     for url in urls:
         r = requests.get(url)
@@ -35,43 +79,13 @@ def player_info():
         playerinfo = [(namelist[i], pointlist[i]) for i in range(0, len(namelist))]
 
     #print(playerinfo)
+
+
+    for player in search:
+        #if player[0] == playerinfo[0]:
+        print(player)
+
     return playerinfo
 
-
-def search(player):
-    bigsearchResults = []
-
-    for number in range(1,31):
-        
-
-        searchData = requests.get('https://statsapi.web.nhl.com/api/v1/teams/{}/roster'.format(number))
-
-        searchResults = searchData.json()
-
-        bigsearchResults.append(searchResults)
-        
-
-    bigsearchResults.remove({'messageNumber': 10, 'message': 'Object not found'})
-    bigsearchResults.remove({'messageNumber': 10, 'message': 'Object not found'})
-
-    idlist = []
-    for i in bigsearchResults:
-        for x in i['roster']:
-            playerid = x['person']['id']
-            idlist.append(playerid)
-
-    for id in idlist:
-        searchData = requests.get('https://statsapi.web.nhl.com/api/v1/people/{}'.format(id))
-        searchResults = searchData.json()
-
-        name = searchResults['people'][0]['fullName']
-        birthmonth = searchResults['people'][0]['birthDate'][5:7]
-        birthcountry = searchResults['people'][0]['birthCountry']
-
-        print(name, birthmonth, birthcountry)
-
-    return name, birthmonth, birthcountry
-
-
-    
-
+search = search()
+player_info()
