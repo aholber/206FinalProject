@@ -95,5 +95,55 @@ def same_names():
 
     return the_best_list_ever
 
+def other_same_names():
+    players = player_info()
+    info = search()
+    points_website_list =[]
+    another_great_list = []
 
-  
+    for player in players:
+        points_website_list.append(player[0])
+    
+    for i in info:
+        if i[0] in points_website_list:
+            another_great_list.append(i)
+
+    print(another_great_list)
+    return another_great_list
+
+
+def setUpDatabase(db_name):
+    path = os.path.dirname(os.path.abspath(__file__))
+    conn = sqlite3.connect(path+'/'+db_name)
+    cur = conn.cursor()
+    return cur, conn
+
+
+def setup_players_table(cur, conn):
+    data = same_names()
+    cur.execute('CREATE TABLE IF NOT EXISTS Players (name TEXT PRIMARY KEY, points INTEGER)')
+    for x in range(0,25):
+        cur.execute('SELECT * FROM Players')
+        rows = len(cur.fetchall())
+        cur.execute('INSERT INTO Players ( name, points) VALUES (?, ?)', (data[rows][0], data[rows][1]))
+    conn.commit()
+
+
+
+
+
+def main():
+    #search()
+    #same_names()
+    other_same_names()
+    #cur, conn = setUpDatabase('players.db')
+   # setup_players_table(cur, conn)
+   # setup_players_table(cur, conn)
+   # setup_players_table(cur, conn)
+  #  setup_players_table(cur, conn)
+   # setup_month_id(cur,conn)
+    #etup_information_table(cur, conn)
+
+
+if __name__ == "__main__":
+    main()
