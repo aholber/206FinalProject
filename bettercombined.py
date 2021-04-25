@@ -34,11 +34,12 @@ def player_info():
 
         playerinfo = [(namelist[i], pointlist[i]) for i in range(0, len(namelist))]
 
-    #print(playerinfo)
+    print(playerinfo)
     return playerinfo
 
 
-def search(player):
+def search():
+    playerinfo = player_info()
     bigsearchResults = []
 
     for number in range(1,31):
@@ -68,10 +69,20 @@ def search(player):
         birthmonth = searchResults['people'][0]['birthDate'][5:7]
         birthcountry = searchResults['people'][0]['birthCountry']
 
-        print(name, birthmonth, birthcountry)
+        #everybody = ((name, birthmonth, birthcountry))
 
-    return name, birthmonth, birthcountry
+        only_who_we_want = []
+        for player in playerinfo:
+            if player[0] == name:
+                only_who_we_want.append((name, birthmonth, birthcountry))
+            for i in only_who_we_want:
+                if i == '[]':
+                    i = ''
+        print(only_who_we_want)
+        #print((name, birthmonth, birthcountry))
+        #return (name, birthmonth, birthcountry)
 
 
-    
+player_info()
+search()    
 
