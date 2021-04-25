@@ -38,36 +38,40 @@ def player_info():
     return playerinfo
 
 
-
-
 def search(player):
-    
-    searchQuery = {
-        'access_key': 'e2b362106cc9821f8ebfdc35e48c265b',
-        'query': player
-    }
+    bigsearchResults = []
 
-    searchData = requests.get('http://api.serpstack.com/search', searchQuery)
-
-    searchResults = searchData.json()
-
-    #print(searchResults)
-
-    birthmonth = searchResults['knowledge_graph']['known_attributes'][0]['value'][0:3]
-    
-    info = searchResults['knowledge_graph']['known_attributes'][0]['value']
-    info = info.split(',')
-    birthcountry = info[-1]
-    birthcountry = birthcountry.strip()
-    if len(birthcountry) <= 2:
-        birthcountry = 'United States'
+    for number in range(1,31):
         
-    #print(birthmonth)
-    #print(birthcountry)
 
-    return player, birthmonth, birthcountry
+        searchData = requests.get('https://statsapi.web.nhl.com/api/v1/teams/{}/roster'.format(number))
 
-for player in player_info():
-    print(search(player[0]))
+        searchResults = searchData.json()
 
-#earch()
+        bigsearchResults.append(searchResults)
+        
+
+    bigsearchResults.remove({'messageNumber': 10, 'message': 'Object not found'})
+    bigsearchResults.remove({'messageNumber': 10, 'message': 'Object not found'})
+
+    idlist = []
+    for i in bigsearchResults:
+        for x in i['roster']:
+            playerid = x['person']['id']
+            idlist.append(playerid)
+
+    for id in idlist:
+        searchData = requests.get('https://statsapi.web.nhl.com/api/v1/people/{}'.format(id))
+        searchResults = searchData.json()
+
+        name = searchResults['people'][0]['fullName']
+        birthmonth = searchResults['people'][0]['birthDate'][5:7]
+        birthcountry = searchResults['people'][0]['birthCountry']
+
+        print(name, birthmonth, birthcountry)
+
+    return name, birthmonth, birthcountry
+
+
+    
+
