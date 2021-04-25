@@ -41,6 +41,7 @@ def player_info():
 def search():
     playerinfo = player_info()
     bigsearchResults = []
+    goodnames = []
 
     for number in range(1,31):
         
@@ -61,6 +62,8 @@ def search():
             playerid = x['person']['id']
             idlist.append(playerid)
 
+    
+
     for id in idlist:
         searchData = requests.get('https://statsapi.web.nhl.com/api/v1/people/{}'.format(id))
         searchResults = searchData.json()
@@ -71,13 +74,15 @@ def search():
 
         #everybody = ((name, birthmonth, birthcountry))
 
-        only_who_we_want = []
+        
         for player in playerinfo:
             if player[0] == name:
-                only_who_we_want.append((name, birthmonth, birthcountry))
-        print(only_who_we_want)
-        #print((name, birthmonth, birthcountry))
-        #return (name, birthmonth, birthcountry)
+                goodnames.append((name, birthmonth, birthcountry))
+
+    print(goodnames)
+
+    return goodnames
+
 
 
 player_info()
