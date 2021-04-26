@@ -41,11 +41,7 @@ def player_info():
 def search():
     playerinfo = player_info()
     bigsearchResults = []
-<<<<<<< HEAD
     goodnames = []
-=======
-    only_who_we_want = []
->>>>>>> e7b6f3815d1c2234d8841ab71157e42cd0f1e791
 
     for number in range(1,31):
         
@@ -78,7 +74,6 @@ def search():
 
         #everybody = ((name, birthmonth, birthcountry))
 
-<<<<<<< HEAD
         
         for player in playerinfo:
             if player[0] == name:
@@ -87,16 +82,6 @@ def search():
     print(goodnames)
 
     return goodnames
-
-=======
-        for player in playerinfo:
-            if player[0] == name:
-                only_who_we_want.append((name, birthmonth, birthcountry))
-    return only_who_we_want
-        #print((name, birthmonth, birthcountry))
-        #return (name, birthmonth, birthcountry)
->>>>>>> e7b6f3815d1c2234d8841ab71157e42cd0f1e791
-
 
 def same_names():
     players = player_info()
@@ -114,4 +99,6 @@ def same_names():
     return the_best_list_ever
 
 
-  
+player_info()
+search()
+same_names()
