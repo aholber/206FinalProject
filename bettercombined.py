@@ -46,15 +46,10 @@ def search():
     goodnames = []
 
     for number in range(1,31):
-        
-
         searchData = requests.get('https://statsapi.web.nhl.com/api/v1/teams/{}/roster'.format(number))
-
         searchResults = searchData.json()
-
         bigsearchResults.append(searchResults)
         
-
     bigsearchResults.remove({'messageNumber': 10, 'message': 'Object not found'})
     bigsearchResults.remove({'messageNumber': 10, 'message': 'Object not found'})
 
@@ -64,8 +59,6 @@ def search():
             playerid = x['person']['id']
             idlist.append(playerid)
 
-    
-
     for id in idlist:
         searchData = requests.get('https://statsapi.web.nhl.com/api/v1/people/{}'.format(id))
         searchResults = searchData.json()
@@ -74,16 +67,12 @@ def search():
         birthmonth = searchResults['people'][0]['birthDate'][5:7]
         birthcountry = searchResults['people'][0]['birthCountry']
 
-        #everybody = ((name, birthmonth, birthcountry))
-
-        
         for player in playerinfo:
             if player[0] == name:
                 goodnames.append((name, birthmonth, birthcountry))
 
-    print(goodnames)
-
     return goodnames
+
 
 def same_names():
     """No inputs. Returns a list of tuples in which the contents are (player, point total). Does this only for players that coincide with both lists."""
@@ -100,6 +89,7 @@ def same_names():
             the_best_list_ever.append(player)
 
     return the_best_list_ever
+
 
 def other_same_names():
     """No inputs. Returns a list of tuples in which the contents are (player, birth month, country). Does this only for players that coincide with both lists."""
@@ -164,7 +154,7 @@ def birth_info_table(cur, conn):
     count = 0
     while count < 25: 
         cur.execute('SELECT COUNT(name) FROM Birthdays')
-        rows = cur.fetchone()[0] #fetchone 
+        rows = cur.fetchone()[0]
         cur.execute('INSERT OR IGNORE INTO Birthdays (name, birth_month, birth_place) VALUES (?, ?, ?)', (info[rows][0], info[rows][1], info[rows][2]))
         if cur.rowcount > 0:
             count += 1
