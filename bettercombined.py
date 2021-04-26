@@ -8,6 +8,7 @@ import json
 
 
 def player_info():
+    
     urls = []
     urls.append("https://www.quanthockey.com/scripts/AjaxPaginate.php?cat=Season&pos=Players&SS=5&af=0&nat=5&st=reg&sort=P&so=DESC&page=1&league=NHL&lang=en&rnd=434602094&dt=2&sd=undefined&ed=undefined")
     urls.append("https://www.quanthockey.com/scripts/AjaxPaginate.php?cat=Season&pos=Players&SS=5&af=0&nat=5&st=reg&sort=P&so=DESC&page=2&league=NHL&lang=en&rnd=704897555&dt=2&sd=undefined&ed=undefined")
@@ -108,7 +109,7 @@ def other_same_names():
         if i[0] in points_website_list:
             another_great_list.append(i)
 
-    print(another_great_list)
+    #print(another_great_list)
     return another_great_list
 
 
@@ -123,11 +124,41 @@ def setup_players_table(cur, conn):
     data = same_names()
     cur.execute('CREATE TABLE IF NOT EXISTS Players (name TEXT PRIMARY KEY, points INTEGER)')
     for x in range(0,25):
-        cur.execute('SELECT * FROM Players')
-        rows = len(cur.fetchall())
+        cur.execute('SELECT COUNT(name) FROM Players')
+        rows = cur.fetchone()[0]
         cur.execute('INSERT INTO Players ( name, points) VALUES (?, ?)', (data[rows][0], data[rows][1]))
     conn.commit()
 
+
+def set_up_country_table(cur, conn):
+    counts = ['USA', 'CAN', 'SWE', 'RUS', 'CZE', 'SVK', 'CHE', 'FIN', 'DEU', 'SVN', 'NOR']
+    cur.execute('CREATE TABLE IF NOT EXISTS Countries (id INTEGER PRIMARY KEY, country TEXT)')
+    for i in range(len(counts)):
+        cur.execute('INSERT INTO Countries (id, country) VALUES (?,?)', (i+1, counts[i]))
+    conn.commit()
+
+
+def setup_month_id(cur,conn):
+    months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    cur.execute('CREATE TABLE IF NOT EXISTS Months_id (id INTEGER PRIMARY KEY, month TEXT)')  
+    for i in range(len(months)):
+        cur.execute('INSERT INTO Months_id (id, month) VALUES (?,?)', (i+1, months[i]))  
+    conn.commit()
+
+
+def birth_info_table(cur, conn):
+    info = other_same_names()
+    #cur.execute('SELECT id FROM Countries WHERE country = ? ', info[rows][2])
+    #c = cur.fetchone()[0]
+    cur.execute('CREATE TABLE IF NOT EXISTS Birthdays (name TEXT PRIMARY KEY, birth_month INTEGER, birth_place TEXT)')
+    count = 0
+    while count < 25: 
+        cur.execute('SELECT COUNT(name) FROM Birthdays')
+        rows = cur.fetchone()[0] #fetchone 
+        cur.execute('INSERT OR IGNORE INTO Birthdays (name, birth_month, birth_place) VALUES (?, ?, ?)', (info[rows][0], info[rows][1], info[rows][2]))
+        if cur.rowcount > 0:
+            count += 1
+    conn.commit()
 
 
 
@@ -135,14 +166,19 @@ def setup_players_table(cur, conn):
 def main():
     #search()
     #same_names()
-    other_same_names()
-    #cur, conn = setUpDatabase('players.db')
-   # setup_players_table(cur, conn)
-   # setup_players_table(cur, conn)
-   # setup_players_table(cur, conn)
-  #  setup_players_table(cur, conn)
-   # setup_month_id(cur,conn)
-    #etup_information_table(cur, conn)
+    #other_same_names()
+    cur, conn = setUpDatabase('players.db')
+    #setup_players_table(cur, conn)
+    #setup_players_table(cur, conn)
+    #setup_players_table(cur, conn)
+    #setup_players_table(cur, conn)
+    #set_up_country_table(cur, conn)
+    #setup_month_id(cur,conn)
+    birth_info_table(cur, conn)
+    birth_info_table(cur, conn)
+    #birth_info_table(cur, conn)
+    #birth_info_table(cur, conn)
+    
 
 
 if __name__ == "__main__":
