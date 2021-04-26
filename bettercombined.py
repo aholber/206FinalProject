@@ -188,9 +188,3 @@ def main():
     birth_info_table(cur, conn)
     #birth_info_table(cur, conn)
     #birth_info_table(cur, conn)
-    
-
-
-player_info()
-search()
-same_names()
