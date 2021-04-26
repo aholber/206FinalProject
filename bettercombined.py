@@ -161,6 +161,55 @@ def birth_info_table(cur, conn):
     conn.commit()
 
 
+##calculations begin here!!!
+
+def return_top_ten_players():
+    """Takes nothing as input. Returns the top 10 players and their point totals over the past 5 years in the NHL."""
+    top_ten_list = []
+    playerinfo = player_info()
+    for player in playerinfo[:10]:
+        top_ten_list.append(player[0]+ " has " + player[1] + " points over the last 5 seasons in the NHL.")
+
+    print(top_ten_list)
+    return top_ten_list
+
+def return_average_points():
+    """Takes nothing as input. Returns the average number of points of the top 10 players over the past 5 years in the NHL in a statement."""
+    top_ten_list = []
+    top_ten_point_totals = []
+    playerinfo = player_info()
+    for player in playerinfo[:10]:
+        top_ten_list.append(player)
+    for i in top_ten_list:
+        top_ten_point_totals.append(int(i[1]))
+    
+    count = 0
+    division = len(top_ten_point_totals)
+    for num in top_ten_point_totals:
+        count += num
+    
+    average = int(count / division)
+
+    statement = "The average number of points over the past 5 seasons by the top 10 players is {}.".format(average)
+    print(statement)
+    return statement
+
+def write_data_to_file(filename):
+    """Takes in a filename (string) as an input. Returns nothing. Creates a file and writes return value of the function return_top_ten_players() and return_average_points() to the file."""
+
+    path = os.path.dirname(os.path.abspath(__file__)) + os.sep
+    
+    outFile = open(path + filename, "w")
+    outFile.write("Top 10 Point Leaders in the NHL over the last 5 seasons.\n")
+    outFile.write("=============================================================\n\n")
+    top_ten_output = return_top_ten_players()
+    for i in top_ten_output:
+        outFile.write(i + "\n\n")
+    outFile.write("The Average Point Total for the Top 10 Players.\n")
+    outFile.write("=============================================================\n\n")
+    top_ten_average_output = return_average_points()
+    outFile.write(top_ten_average_output)
+    outFile.close()
 
 
 def main():
@@ -178,3 +227,10 @@ def main():
     birth_info_table(cur, conn)
     #birth_info_table(cur, conn)
     #birth_info_table(cur, conn)
+    #return_top_ten_players()
+    #return_average_points()
+    #write_data_to_file("top_ten_player_info.txt")
+
+if __name__ == "__main__":
+    main()
+    
