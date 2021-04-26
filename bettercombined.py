@@ -119,10 +119,12 @@ def setUpDatabase(db_name):
 def setup_players_table(cur, conn):
     """Takes the database cursor and connection as inputs. Returns nothing. Inserts into the table all of the player names and their corresponding point totals over the last 5 years."""
     data = same_names()
-    cur.execute('CREATE TABLE IF NOT EXISTS Players (name TEXT PRIMARY KEY, points INTEGER)')
+    cur.execute('CREATE TABLE IF NOT EXISTS Players (id INTEGER PRIMARY KEY, name TEXT, points INTEGER)')
     for x in range(0,25):
         cur.execute('SELECT COUNT(name) FROM Players')
         rows = cur.fetchone()[0]
+        if rows >= 121:
+            break
         cur.execute('INSERT INTO Players (name, points) VALUES (?, ?)', (data[rows][0], data[rows][1]))
     conn.commit()
 
@@ -130,35 +132,42 @@ def setup_players_table(cur, conn):
 def set_up_country_table(cur, conn):
     """Takes the database cursor and connection as inputs. Returns nothing. Inserts into the table all of the player countries and a corresponding id number."""
     counts = ['USA', 'CAN', 'SWE', 'RUS', 'CZE', 'SVK', 'CHE', 'FIN', 'DEU', 'SVN', 'NOR']
-    cur.execute('CREATE TABLE IF NOT EXISTS Countries (id INTEGER PRIMARY KEY, country TEXT)')
-    for i in range(len(counts)):
-        cur.execute('INSERT INTO Countries (id, country) VALUES (?,?)', (i+1, counts[i]))
+    cur.execute('CREATE TABLE IF NOT EXISTS Countries (id INTEGER PRIMARY KEY, country TEXT UNIQUE)')
+    for i in counts:
+        cur.execute('INSERT OR IGNORE INTO Countries (country) VALUES (?)', (i,))
     conn.commit()
 
 
 def setup_month_id(cur,conn):
     """Takes the database cursor and connection as inputs. Returns nothing. Inserts into the table all of the birth months and a corresponding id number."""
     months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    cur.execute('CREATE TABLE IF NOT EXISTS Months_id (id INTEGER PRIMARY KEY, month TEXT)')  
-    for i in range(len(months)):
-        cur.execute('INSERT INTO Months_id (id, month) VALUES (?,?)', (i+1, months[i]))  
+    cur.execute('CREATE TABLE IF NOT EXISTS Months_id (id INTEGER PRIMARY KEY, month TEXT UNIQUE)')  
+    for i in months:
+        cur.execute('INSERT OR IGNORE INTO Months_id (month) VALUES (?)', (i,))  
     conn.commit()
 
 
 def birth_info_table(cur, conn):
     """Takes the database cursor and connection as inputs. Returns nothing. Inserts into the table all of the player names, and both their corresponding birth months and birth countries."""
     info = other_same_names()
-    #cur.execute('SELECT id FROM Countries WHERE country = ? ', info[rows][2])
-    #c = cur.fetchone()[0]
-    cur.execute('CREATE TABLE IF NOT EXISTS Birthdays (name TEXT PRIMARY KEY, birth_month INTEGER, birth_place TEXT)')
+    cur.execute('CREATE TABLE IF NOT EXISTS Birthdays (id INTEGER PRIMARY KEY, name TEXT, birth_month INTEGER, birth_place INT)')
     count = 0
     while count < 25: 
         cur.execute('SELECT COUNT(name) FROM Birthdays')
         rows = cur.fetchone()[0]
-        cur.execute('INSERT OR IGNORE INTO Birthdays (name, birth_month, birth_place) VALUES (?, ?, ?)', (info[rows][0], info[rows][1], info[rows][2]))
+        cur.execute('SELECT id FROM Countries WHERE country = ? ', (info[rows][2],))
+        countryid = cur.fetchone()[0]
+        if rows >= 121:
+            break
+        cur.execute('INSERT OR IGNORE INTO Birthdays (name, birth_month, birth_place) VALUES (?, ?, ?)', (info[rows][0], info[rows][1], countryid))
         if cur.rowcount > 0:
             count += 1
     conn.commit()
+##join statment, select join where ids are equal, 
+
+def join_tables(cur, conn):
+    cur.execute('SELECT Players.name, Players.points, Birthdays.birth_month, Birthdays.birth_place FROM Players JOIN Birthdays WHERE Players.name = Birthdays.name')
+    return cur.fetchall()
 
 
 ##calculations begin here!!!
@@ -217,16 +226,10 @@ def main():
     #same_names()
     #other_same_names()
     cur, conn = setUpDatabase('players.db')
-    #setup_players_table(cur, conn)
-    #setup_players_table(cur, conn)
-    #setup_players_table(cur, conn)
-    #setup_players_table(cur, conn)
-    #set_up_country_table(cur, conn)
-    #setup_month_id(cur,conn)
+    setup_players_table(cur, conn)
+    set_up_country_table(cur, conn)
+    setup_month_id(cur,conn)
     birth_info_table(cur, conn)
-    birth_info_table(cur, conn)
-    #birth_info_table(cur, conn)
-    #birth_info_table(cur, conn)
     #return_top_ten_players()
     #return_average_points()
     #write_data_to_file("top_ten_player_info.txt")
