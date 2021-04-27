@@ -105,7 +105,13 @@ def main():
     y = np.array([pie_guy[0],pie_guy[1]])
     mylabels = ["Jan, Feb, Mar", "Last 9 Months"]
     myexplode = [0.2, 0]
-    plt.pie(y, labels = mylabels, explode = myexplode)
+
+    def func(pct, allvalues):
+        absolute = int(pct / 100.*np.sum(allvalues))
+        return "{:.1f}%".format(pct, absolute)
+    
+    plt.pie(y, autopct = lambda pct: func(pct, y), labels = mylabels, shadow = True, explode = myexplode)
+    plt.title("Percent of NHL Leaders Born in First Three Months")
     plt.show() 
 
 
