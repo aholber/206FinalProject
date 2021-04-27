@@ -240,7 +240,7 @@ def return_most_pop_country(cur, conn):
         if rows[0][0] not in country_dic:
             country_dic[rows[0][0]] = 0
         country_dic[rows[0][0]] += 1
-
+        
     return country_dic
 
 
@@ -272,14 +272,25 @@ def write_data_to_file_2(filename, cur, conn):
     outFile.write("Players Organized by What Country They Were Born In.\n")
     outFile.write("=============================================================\n\n")
     country_dic = return_most_pop_country(cur, conn)
+    
+    total1 = 0
     for i in country_dic:
-        outFile.write('There are {} players that were born in {}." \n\n"'.format(country_dic[i], i))
+        total1 += country_dic[i]
+    for i in country_dic:
+        percent = str((country_dic[i]/total1)*100)[0:5]
+        outFile.write('{}% of players were born in {}." \n\n"'.format(percent, i))
     
     outFile.write("Players Organized by What Month They Were Born In.\n")
     outFile.write("=============================================================\n\n")
     month_dic = return_most_pop_month(cur, conn)
+    
+    total2 = 0
     for i in month_dic:
-        outFile.write('There are {} players that were born in {}." \n\n"'.format(month_dic[i], i))
+        total2 += month_dic[i]
+    for i in month_dic:
+        percent = str((month_dic[i]/total2)*100)[0:5]
+        outFile.write('{}% of players were born in {}." \n\n"'.format(percent, i))
+
     outFile.close()
 
 
