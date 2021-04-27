@@ -18,14 +18,7 @@ def main():
     conn = sqlite3.connect(path+'/players.db')
     cur = conn.cursor()
 
-    #x-axis not anymore
-    #month_dic = []
-    #cur.execute('SELECT month FROM Months_id')
-    #months = cur.fetchall()
-    #for month in months:
-     #   month_dic.append(month[0])
-    #print(month_dic)
-    
+   
     #1!!!!!
     #first visualization info
     month_dic = {}
@@ -42,7 +35,6 @@ def main():
 
     sortguy = (sorted(month_dic.items(), key = lambda x: x[1]))
 
-    #print(sortguy)
 
     #x-axis
     xlst_graph1 = []
@@ -52,7 +44,7 @@ def main():
     #y-axis
     ylst_graph1 = []
     for y in sortguy:
-        ylst_graph1.append(y[1])
+        ylst_graph1.append((y[1]/121))
 
     #2!!!!!
     #second visualization info
@@ -78,7 +70,7 @@ def main():
     #y-axis
     ylst_graph2 = []
     for y in sortguy:
-        ylst_graph2.append(y[1])
+        ylst_graph2.append((y[1]/121))
 
     
     #3!!!!!
@@ -89,16 +81,16 @@ def main():
     fig = plt.figure(figsize = (10, 5))
     plt.bar(xlst_graph1, ylst_graph1, color ='maroon', width = 0.3)
     plt.xlabel('Months')
-    plt.ylabel('Number of Players')
-    plt.title('Number of NHL Players Born Per Month')
+    plt.ylabel('Percent of Players')
+    plt.title('Percent of NHL Players Born Per Month')
     plt.show()
 
     #visualization 2 - bar graph / country
     fig = plt.figure(figsize = (10, 5))
     plt.bar(xlst_graph2, ylst_graph2, color ='blue', width = 0.3)
     plt.xlabel('Countries')
-    plt.ylabel('Number of Players')
-    plt.title('Number of NHL Players Born Per Country')
+    plt.ylabel('Percent of Players')
+    plt.title('Percent of NHL Players Born Per Country')
     plt.show()
 
     #visualization 3 - pie chart / 
