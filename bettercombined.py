@@ -166,6 +166,7 @@ def birth_info_table(cur, conn):
 ##join statment, select join where ids are equal, 
 
 def join_tables(cur, conn):
+    """Takes the database cursor and connection as inputs. Joining the tables in order to have all data wanted in the same table in database."""
     cur.execute('SELECT Players.name, Players.points, Birthdays.birth_month, Birthdays.birth_place FROM Players JOIN Birthdays WHERE Players.name = Birthdays.name')
     return cur.fetchall()
 
@@ -261,10 +262,6 @@ def return_most_pop_month(cur, conn):
     return month_dic
 
 
-
-    
-
-
 #FILE 2
 def write_data_to_file_2(filename, cur, conn):
     """Takes in a filename (string) as an input and the database cursor and connection as inputs. Returns nothing. Creates a file and writes return value of the function return_top_ten_players() and return_average_points() to the file."""
@@ -337,6 +334,7 @@ def write_data_to_file_3(filename, cur, conn):
 
 
 def main():
+    """Takes no inputs and returns nothing. Calls all of the functions in order to run the project."""
     #search()
     #same_names()
     #other_same_names()
@@ -347,9 +345,9 @@ def main():
     #birth_info_table(cur, conn)
     
     #CALCS 1 and 2 + FILE 1 BELOW
-    #return_top_ten_players()
-    #return_average_points()
-    #write_data_to_file("top_ten_player_info.txt")
+    return_top_ten_players()
+    return_average_points()
+    write_data_to_file("top_ten_player_info.txt")
 
     #CALCS 3 and 4 + FILE 2 BELOW
     return_most_pop_country(cur, conn)
