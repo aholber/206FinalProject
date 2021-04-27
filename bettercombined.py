@@ -356,24 +356,20 @@ def write_data_to_file_3(filename, cur, conn):
 def main():
     """Takes no inputs and returns nothing. Calls all of the functions in order to run the project."""
     cur, conn = setUpDatabase('players.db')
-    #setup_players_table(cur, conn)
-    #set_up_country_table(cur, conn)
-    #setup_month_id(cur,conn)
-    #birth_info_table(cur, conn)
+    setup_players_table(cur, conn)
+    set_up_country_table(cur, conn)
+    setup_month_id(cur,conn)
+    birth_info_table(cur, conn)
     
-    #CALCS 1 and 2 + FILE 1 BELOW
-    #return_top_ten_players()
-    #return_average_points()
-    #write_data_to_file("top_ten_player_info.txt")
-
-    #CALCS 3 and 4 + FILE 2 BELOW
-    #return_most_pop_country(cur, conn)
-    #return_most_pop_month(cur, conn)
-    #write_data_to_file_2("country_and_month_info.txt", cur, conn)
-
-    #CALC 5 + FILE 3 BELOW
-    #return_first_three_months(cur, conn)
-    #write_data_to_file_3("percentages.txt", cur, conn)
+    #CALCULATIONS AND FILES
+    #return_top_ten_players()   #CALC 1
+    #return_average_points()    #CALC 2
+    #write_data_to_file("top_ten_player_info.txt")      #FILE1
+    #return_most_pop_country(cur, conn)     #CALC 3
+    #return_most_pop_month(cur, conn)       #CALC 4
+    #write_data_to_file_2("country_and_month_info.txt", cur, conn)      #FILE2
+    #return_first_three_months(cur, conn)   #CALC 5
+    #write_data_to_file_3("percentages.txt", cur, conn)     #FILE3
 
 if __name__ == "__main__":
     main()
