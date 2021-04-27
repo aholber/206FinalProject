@@ -172,6 +172,7 @@ def join_tables(cur, conn):
 
 ##calculations begin here!!!
 
+#CALCULATION 1
 def return_top_ten_players():
     """Takes nothing as input. Returns the top 10 players and their point totals over the past 5 years in the NHL."""
     top_ten_list = []
@@ -179,9 +180,10 @@ def return_top_ten_players():
     for player in playerinfo[:10]:
         top_ten_list.append(player[0]+ " has " + player[1] + " points over the last 5 seasons in the NHL.")
 
-    print(top_ten_list)
+
     return top_ten_list
 
+#CALCULATION 2
 def return_average_points():
     """Takes nothing as input. Returns the average number of points of the top 10 players over the past 5 years in the NHL in a statement."""
     top_ten_list = []
@@ -200,9 +202,10 @@ def return_average_points():
     average = int(count / division)
 
     statement = "The average number of points over the past 5 seasons by the top 10 players is {}.".format(average)
-    print(statement)
+  
     return statement
 
+#FILE 1
 def write_data_to_file(filename):
     """Takes in a filename (string) as an input. Returns nothing. Creates a file and writes return value of the function return_top_ten_players() and return_average_points() to the file."""
 
@@ -214,6 +217,7 @@ def write_data_to_file(filename):
     top_ten_output = return_top_ten_players()
     for i in top_ten_output:
         outFile.write(i + "\n\n")
+    
     outFile.write("The Average Point Total for the Top 10 Players.\n")
     outFile.write("=============================================================\n\n")
     top_ten_average_output = return_average_points()
@@ -221,18 +225,140 @@ def write_data_to_file(filename):
     outFile.close()
 
 
+#CALCULATION 3
+def return_most_pop_country(cur, conn):
+    """Takes the database cursor and connection as inputs. Returns the country where the majority of the top 100 players were born."""
+    country_dic = {}
+    cur.execute('SELECT birth_place FROM Birthdays')
+    countries = cur.fetchall()
+
+    for country in countries:
+        cur.execute('SELECT country FROM Countries WHERE id = ? ', (country))
+        rows = cur.fetchall()
+
+        if rows[0][0] not in country_dic:
+            country_dic[rows[0][0]] = 0
+        country_dic[rows[0][0]] += 1
+
+    return country_dic
+
+
+#CALCULATION 4
+def return_most_pop_month(cur, conn):
+    """Takes the database cursor and connection as inputs. Returns the month that the majority of the top 100 players were born."""
+    month_dic = {}
+    cur.execute('SELECT birth_month FROM Birthdays')
+    months = cur.fetchall()
+    
+    for month in months:
+        cur.execute('SELECT month FROM Months_id WHERE id = ? ', (month))
+        rows = cur.fetchall()
+
+        if rows[0][0] not in month_dic:
+            month_dic[rows[0][0]] = 0
+        month_dic[rows[0][0]] += 1
+
+    return month_dic
+
+
+
+    
+
+
+#FILE 2
+def write_data_to_file_2(filename, cur, conn):
+    """Takes in a filename (string) as an input and the database cursor and connection as inputs. Returns nothing. Creates a file and writes return value of the function return_top_ten_players() and return_average_points() to the file."""
+
+    path = os.path.dirname(os.path.abspath(__file__)) + os.sep
+    
+    outFile = open(path + filename, "w")
+    outFile.write("Players Organized by What Country They Were Born In.\n")
+    outFile.write("=============================================================\n\n")
+    country_dic = return_most_pop_country(cur, conn)
+    for i in country_dic:
+        outFile.write('There are {} players that were born in {}." \n\n"'.format(country_dic[i], i))
+    
+    outFile.write("Players Organized by What Month They Were Born In.\n")
+    outFile.write("=============================================================\n\n")
+    month_dic = return_most_pop_month(cur, conn)
+    for i in month_dic:
+        outFile.write('There are {} players that were born in {}." \n\n"'.format(month_dic[i], i))
+    outFile.close()
+
+
+#CALCULATION 5 
+def return_first_three_months(cur, conn):
+    """Takes in a filename (string) as an input and the database cursor and connection as inputs. Returns the percentage of players that were born in the months of January, February, and March."""
+    count_3months = 0
+    count_total = 0
+    cur.execute('SELECT birth_month FROM Birthdays')
+    months = cur.fetchall()
+    for month in months:
+        month = month[0]
+        if month == 1:
+            count_3months +=1
+            count_total += 1
+        elif month == 2:
+            count_3months +=1
+            count_total += 1
+        elif month == 3:
+            count_3months +=1
+            count_total += 1
+        else:
+            count_total += 1
+
+    #Divide count_3months by count_total multiplied by 100 for the average
+
+    averageof3months = (count_3months / count_total) * 100 
+    averageof9months = (100 - (count_3months / count_total) * 100)
+
+    lst = []
+    lst.append(averageof3months)
+    lst.append(averageof9months)
+
+    return lst
+
+
+#FILE 3
+def write_data_to_file_3(filename, cur, conn):
+    """Takes in a filename (string) as an input. Returns nothing. Creates a file and writes return value of the function return_top_ten_players() and return_average_points() to the file."""
+
+    path = os.path.dirname(os.path.abspath(__file__)) + os.sep
+    
+    outFile = open(path + filename, "w")
+    outFile.write("Players Organized by Month Percentage\n")
+    outFile.write("=============================================================\n\n")
+    lst = return_first_three_months(cur, conn)
+    outFile.write('{}% of players are born in the first 3 months of the year (January, February, March)." \n\n"'.format(lst[0]))
+    outFile.write('{}% of players are born in the last 9 months of the year." \n\n"'.format(lst[1]))
+    
+    outFile.close()
+
+
+
 def main():
     #search()
     #same_names()
     #other_same_names()
     cur, conn = setUpDatabase('players.db')
-    setup_players_table(cur, conn)
-    set_up_country_table(cur, conn)
-    setup_month_id(cur,conn)
-    birth_info_table(cur, conn)
+    #setup_players_table(cur, conn)
+    #set_up_country_table(cur, conn)
+    #setup_month_id(cur,conn)
+    #birth_info_table(cur, conn)
+    
+    #CALCS 1 and 2 + FILE 1 BELOW
     #return_top_ten_players()
     #return_average_points()
     #write_data_to_file("top_ten_player_info.txt")
+
+    #CALCS 3 and 4 + FILE 2 BELOW
+    return_most_pop_country(cur, conn)
+    return_most_pop_month(cur, conn)
+    write_data_to_file_2("country_and_month_info.txt", cur, conn)
+
+    #CALC 5 + FILE 3 BELOW
+    return_first_three_months(cur, conn)
+    write_data_to_file_3("percentages.txt", cur, conn)
 
 if __name__ == "__main__":
     main()
