@@ -8,6 +8,8 @@ import os
 import csv
 import sqlite3
 import json
+from bettercombined import return_first_three_months
+
 
 
 def main():
@@ -16,15 +18,16 @@ def main():
     conn = sqlite3.connect(path+'/players.db')
     cur = conn.cursor()
 
-    #x-axis
-    month_dic = []
-    cur.execute('SELECT month FROM Months_id')
-    months = cur.fetchall()
-    for month in months:
-        month_dic.append(month[0])
-    print(month_dic)
+    #x-axis not anymore
+    #month_dic = []
+    #cur.execute('SELECT month FROM Months_id')
+    #months = cur.fetchall()
+    #for month in months:
+     #   month_dic.append(month[0])
+    #print(month_dic)
     
-    #y-axis
+    #1!!!!!
+    #first visualization info
     month_dic = {}
     cur.execute('SELECT birth_month FROM Birthdays')
     months = cur.fetchall()
@@ -41,30 +44,69 @@ def main():
 
     print(sortguy)
 
-    xlst = []
+    #x-axis
+    xlst_graph1 = []
     for x in sortguy:
-        xlst.append(x[0])
+        xlst_graph1.append(x[0])
     
-    ylst = []
+    #y-axis
+    ylst_graph1 = []
     for y in sortguy:
-        ylst.append(y[1])
+        ylst_graph1.append(y[1])
 
+    #2!!!!!
+    #second visualization info
+    country_dic = {}
+    cur.execute('SELECT birth_place FROM Birthdays')
+    countries = cur.fetchall()
+    
+    for country in countries:
+        cur.execute('SELECT country FROM Countries WHERE id = ? ', (country))
+        rows = cur.fetchall()
 
-        #if rows[0][0] not in month_dic:
-          #  month_dic[rows[0][0]] = 0
-        #month_dic[rows[0][0]] += 1
-    #print(month_dic)
-    #return month_dic
+        if rows[0][0] not in country_dic:
+            country_dic[rows[0][0]] = 0
+        country_dic[rows[0][0]] += 1
 
+    sortguy = (sorted(country_dic.items(), key = lambda x: x[1]))
 
-    #months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    values = [6, 8, 11, 9, 16, 7, 15, 7, 10, 14, 7, 11]
+    #x-axis
+    xlst_graph2 = []
+    for x in sortguy:
+        xlst_graph2.append(x[0])
+    
+    #y-axis
+    ylst_graph2 = []
+    for y in sortguy:
+        ylst_graph2.append(y[1])
+
+    
+    #3!!!!!
+    #third visualization info
+    pie_guy = return_first_three_months(cur, conn)
+
+    #visualization 1 - bar graph / month
     fig = plt.figure(figsize = (10, 5))
-    plt.bar(xlst, ylst, color ='maroon', width = 0.3)
+    plt.bar(xlst_graph1, ylst_graph1, color ='maroon', width = 0.3)
     plt.xlabel('Months')
     plt.ylabel('Number of Players')
     plt.title('Number of NHL Players Born Per Month')
     plt.show()
+
+    #visualization 2 - bar graph / country
+    fig = plt.figure(figsize = (10, 5))
+    plt.bar(xlst_graph2, ylst_graph2, color ='blue', width = 0.3)
+    plt.xlabel('Countries')
+    plt.ylabel('Number of Players')
+    plt.title('Number of NHL Players Born Per Country')
+    plt.show()
+
+    #visualization 3 - pie chart / 
+    y = np.array([pie_guy[0],pie_guy[1]])
+    mylabels = ["Jan, Feb, Mar", "Last 9 Months"]
+    myexplode = [0.2, 0]
+    plt.pie(y, labels = mylabels, explode = myexplode)
+    plt.show() 
 
 
 
