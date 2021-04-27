@@ -42,7 +42,7 @@ def main():
 
     sortguy = (sorted(month_dic.items(), key = lambda x: x[1]))
 
-    print(sortguy)
+    #print(sortguy)
 
     #x-axis
     xlst_graph1 = []
