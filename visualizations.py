@@ -99,6 +99,7 @@ def main():
     myexplode = [0.2, 0]
 
     def func(pct, allvalues):
+        """Takes in two parameters pct and allvalues that create the percentages for the pie chart and displays them on each section. Returns %."""
         absolute = int(pct / 100.*np.sum(allvalues))
         return "{:.1f}%".format(pct, absolute)
     
