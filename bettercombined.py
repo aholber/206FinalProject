@@ -10,6 +10,7 @@ import json
 def player_info():
     """No inputs. Returns a list of tuples in which the contents are (player, point total). Does this for 150 players."""
     urls = []
+    #scraped 3 pages from stats website to get over 100 NHL players to store
     urls.append("https://www.quanthockey.com/scripts/AjaxPaginate.php?cat=Season&pos=Players&SS=5&af=0&nat=5&st=reg&sort=P&so=DESC&page=1&league=NHL&lang=en&rnd=434602094&dt=2&sd=undefined&ed=undefined")
     urls.append("https://www.quanthockey.com/scripts/AjaxPaginate.php?cat=Season&pos=Players&SS=5&af=0&nat=5&st=reg&sort=P&so=DESC&page=2&league=NHL&lang=en&rnd=704897555&dt=2&sd=undefined&ed=undefined")
     urls.append("https://www.quanthockey.com/scripts/AjaxPaginate.php?cat=Season&pos=Players&SS=5&af=0&nat=5&st=reg&sort=P&so=DESC&page=3&league=NHL&lang=en&rnd=102842642&dt=2&sd=undefined&ed=undefined")
@@ -76,36 +77,41 @@ def search():
 
 def same_names():
     """No inputs. Returns a list of tuples in which the contents are (player, point total). Does this only for players that coincide with both lists."""
-    players = player_info()
-    info = search()
+    players = player_info()             #call function that uses beautiful soup
+    info = search()                     #call api function 
     name_api_list = []
     the_best_list_ever = []
     
-    for i in info:
+    for i in info:                      #create list of NHL player names in api function return
         name_api_list.append(i[0])
 
     for player in players:
-        if player[0] in name_api_list:
-            the_best_list_ever.append(player)
+        if player[0] in name_api_list:              #new list that only contains players from website that are also in api 
+            the_best_list_ever.append(player)           
 
     return the_best_list_ever
 
 
 def other_same_names():
     """No inputs. Returns a list of tuples in which the contents are (player, birth month, country). Does this only for players that coincide with both lists."""
-    players = player_info()
-    info = search()
+    players = player_info()             #call function that uses beautiful soup 
+    info = search()                     #call api function 
     points_website_list =[]
     another_great_list = []
 
     for player in players:
-        points_website_list.append(player[0])
+        points_website_list.append(player[0])           #creates list of NHL players names in beautiful soup function
     
     for i in info:
-        if i[0] in points_website_list:
+        if i[0] in points_website_list:                 #new list that only contains players from api that are also in website 
             another_great_list.append(i)
 
     return another_great_list
+
+
+#################
+### databases ###
+#################
 
 
 def setUpDatabase(db_name):
@@ -120,10 +126,10 @@ def setup_players_table(cur, conn):
     """Takes the database cursor and connection as inputs. Returns nothing. Inserts into the table all of the player names and their corresponding point totals over the last 5 years."""
     data = same_names()
     cur.execute('CREATE TABLE IF NOT EXISTS Players (id INTEGER PRIMARY KEY, name TEXT, points INTEGER)')
-    for x in range(0,25):
+    for x in range(0,25):                           #limit input to 25 at a time
         cur.execute('SELECT COUNT(name) FROM Players')
         rows = cur.fetchone()[0]
-        if rows >= 121:
+        if rows >= 121:                         #last group of data only has 22 rows of data
             break
         cur.execute('INSERT INTO Players (name, points) VALUES (?, ?)', (data[rows][0], data[rows][1]))
     conn.commit()
@@ -133,7 +139,7 @@ def set_up_country_table(cur, conn):
     """Takes the database cursor and connection as inputs. Returns nothing. Inserts into the table all of the player countries and a corresponding id number."""
     counts = ['USA', 'CAN', 'SWE', 'RUS', 'CZE', 'SVK', 'CHE', 'FIN', 'DEU', 'SVN', 'NOR']
     cur.execute('CREATE TABLE IF NOT EXISTS Countries (id INTEGER PRIMARY KEY, country TEXT UNIQUE)')
-    for i in counts:
+    for i in counts:                
         cur.execute('INSERT OR IGNORE INTO Countries (country) VALUES (?)', (i,))
     conn.commit()
 
@@ -152,15 +158,15 @@ def birth_info_table(cur, conn):
     info = other_same_names()
     cur.execute('CREATE TABLE IF NOT EXISTS Birthdays (id INTEGER PRIMARY KEY, name TEXT, birth_month INTEGER, birth_place INT)')
     count = 0
-    while count < 25: 
+    while count < 25:                   #limit the input to 25 at a times
         cur.execute('SELECT COUNT(name) FROM Birthdays')
         rows = cur.fetchone()[0]
         cur.execute('SELECT id FROM Countries WHERE country = ? ', (info[rows][2],))
         countryid = cur.fetchone()[0]
-        if rows >= 121:
+        if rows >= 121:             #last group of data has less than 25, so break when at the end
             break
         cur.execute('INSERT OR IGNORE INTO Birthdays (name, birth_month, birth_place) VALUES (?, ?, ?)', (info[rows][0], info[rows][1], countryid))
-        if cur.rowcount > 0:
+        if cur.rowcount > 0:            #update count so it recognizes when it ignores a piece of data
             count += 1
     conn.commit()
 ##join statment, select join where ids are equal, 
@@ -171,7 +177,10 @@ def join_tables(cur, conn):
     return cur.fetchall()
 
 
-##calculations begin here!!!
+#############################
+## calculations begin here ##
+#############################
+
 
 #CALCULATION 1
 def return_top_ten_players():
@@ -346,28 +355,21 @@ def write_data_to_file_3(filename, cur, conn):
 
 def main():
     """Takes no inputs and returns nothing. Calls all of the functions in order to run the project."""
-    #search()
-    #same_names()
-    #other_same_names()
     cur, conn = setUpDatabase('players.db')
-    #setup_players_table(cur, conn)
-    #set_up_country_table(cur, conn)
-    #setup_month_id(cur,conn)
-    #birth_info_table(cur, conn)
+    setup_players_table(cur, conn)
+    set_up_country_table(cur, conn)
+    setup_month_id(cur,conn)
+    birth_info_table(cur, conn)
     
-    #CALCS 1 and 2 + FILE 1 BELOW
-    return_top_ten_players()
-    return_average_points()
-    write_data_to_file("top_ten_player_info.txt")
-
-    #CALCS 3 and 4 + FILE 2 BELOW
-    return_most_pop_country(cur, conn)
-    return_most_pop_month(cur, conn)
-    write_data_to_file_2("country_and_month_info.txt", cur, conn)
-
-    #CALC 5 + FILE 3 BELOW
-    return_first_three_months(cur, conn)
-    write_data_to_file_3("percentages.txt", cur, conn)
+    #CALCULATIONS AND FILES
+    #return_top_ten_players()   #CALC 1
+    #return_average_points()    #CALC 2
+    #write_data_to_file("top_ten_player_info.txt")      #FILE1
+    #return_most_pop_country(cur, conn)     #CALC 3
+    #return_most_pop_month(cur, conn)       #CALC 4
+    #write_data_to_file_2("country_and_month_info.txt", cur, conn)      #FILE2
+    #return_first_three_months(cur, conn)   #CALC 5
+    #write_data_to_file_3("percentages.txt", cur, conn)     #FILE3
 
 if __name__ == "__main__":
     main()
