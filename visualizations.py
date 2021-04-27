@@ -44,7 +44,7 @@ def main():
     #y-axis
     ylst_graph1 = []
     for y in sortguy:
-        ylst_graph1.append((y[1]/121))
+        ylst_graph1.append(100*(y[1]/121))
 
     #2!!!!!
     #second visualization info
@@ -70,7 +70,7 @@ def main():
     #y-axis
     ylst_graph2 = []
     for y in sortguy:
-        ylst_graph2.append((y[1]/121))
+        ylst_graph2.append(100*(y[1]/121))
 
     
     #3!!!!!
